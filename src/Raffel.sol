@@ -93,12 +93,7 @@ contract Raffel is VRFConsumerBaseV2 {
 
     function checkUpkeep(
         bytes calldata /* checkData */
-    )
-        public
-        view
-        
-        returns (bool upkeepNeeded, bytes memory /* performData */)
-    {
+    ) public view returns (bool upkeepNeeded, bytes memory /* performData */) {
         bool isOpen = RaffleState.OPEN == s_raffleState;
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
         bool hasPlayers = s_players.length > 0;
@@ -107,12 +102,16 @@ contract Raffel is VRFConsumerBaseV2 {
         return (upkeepNeeded, "0X0");
     }
 
-     function performUpkeep(bytes calldata /* performData */ ) external {
-
-        (bool upkeepNeeded,) = checkUpkeep("");
+    function performUpkeep(bytes calldata /* performData */) external {
+        
+        (bool upkeepNeeded, ) = checkUpkeep("");
         // require(upkeepNeeded, "Upkeep not needed");
         if (!upkeepNeeded) {
-            revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
         }
         s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
