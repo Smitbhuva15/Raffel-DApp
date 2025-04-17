@@ -7,7 +7,7 @@ import {Raffel} from "../src/Raffel.sol";
 import {HelpingConfig} from "./HelpingConfig.s.sol";
 
 contract DeployRaffel is Script {
-    function run() external returns (Raffel) {
+    function run() external returns (Raffel,HelpingConfig) {
         HelpingConfig helperConfig = new HelpingConfig();
         (
             uint256 entranceFee,
@@ -31,6 +31,6 @@ contract DeployRaffel is Script {
         );
         vm.stopBroadcast();
 
-        return r1;
+        return (r1,helperConfig);
     }
 }

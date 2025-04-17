@@ -19,11 +19,13 @@
 // private
 // view & pure functions
 
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 import {VRFCoordinatorV2Interface} from "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import {VRFConsumerBaseV2} from "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
+
 
 contract Raffel is VRFConsumerBaseV2 {
     /* Errors */
@@ -92,7 +94,7 @@ contract Raffel is VRFConsumerBaseV2 {
     }
 
     function checkUpkeep(
-        bytes calldata /* checkData */
+      bytes memory /* checkData */
     ) public view returns (bool upkeepNeeded, bytes memory /* performData */) {
         bool isOpen = RaffleState.OPEN == s_raffleState;
         bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
@@ -114,7 +116,7 @@ contract Raffel is VRFConsumerBaseV2 {
             );
         }
         s_raffleState = RaffleState.CALCULATING;
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(
+        i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
@@ -124,9 +126,9 @@ contract Raffel is VRFConsumerBaseV2 {
     }
 
     function fulfillRandomWords(
-        uint256 _requestId,
+        uint256 /*requestId */, 
         uint256[] memory _randomWords
-    ) internal override {
+    ) internal  override{
         uint256 RandomNumber = _randomWords[0];
 
         uint Randomindex = RandomNumber % s_players.length;
@@ -151,5 +153,9 @@ contract Raffel is VRFConsumerBaseV2 {
 
     function getEntranceFee() public view returns (uint256) {
         return i_entranceFee;
+    }
+
+     function getRaffelState() public view returns (RaffleState) {
+        return s_raffleState;
     }
 }
