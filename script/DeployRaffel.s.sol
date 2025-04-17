@@ -5,6 +5,7 @@ pragma solidity ^0.8.19;
 import {Script} from "forge-std/Script.sol";
 import {Raffel} from "../src/Raffel.sol";
 import {HelpingConfig} from "./HelpingConfig.s.sol";
+import {CreateSubScription}  from './Interactions.s.sol';
 
 contract DeployRaffel is Script {
     function run() external returns (Raffel,HelpingConfig) {
@@ -18,7 +19,10 @@ contract DeployRaffel is Script {
             uint32 callbackGasLimit
         ) = helperConfig.localNetworkConfig();
 
-       
+       if(subscriptionId==0){
+        CreateSubScription createsubscription=new CreateSubScription();
+        subscriptionId=createsubscription.CreateSubScriptionId(vrfCoordinator);
+       }
 
         vm.startBroadcast();
         Raffel r1 = new Raffel(
