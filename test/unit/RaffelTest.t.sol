@@ -8,6 +8,8 @@ import {Raffel} from "../../src/Raffel.sol";
 import {HelpingConfig} from "../../script/HelpingConfig.s.sol";
 
 contract RaffelTest is Test {
+    event EnteredRaffel(address indexed player);
+
     Raffel raffel;
     HelpingConfig helperConfig;
 
@@ -33,9 +35,47 @@ contract RaffelTest is Test {
             subscriptionId,
             callbackGasLimit
         ) = helperConfig.localNetworkConfig();
+
+        vm.deal(PLAYER, STARTING_USER_BALANCE);
     }
 
-    function testRaffleInitializesInOpenState() public view{
-        assert(raffel.getRaffelState()==Raffel.RaffleState.OPEN);
+    function testRaffleInitializesInOpenState() public view {
+        assert(raffel.getRaffelState() == Raffel.RaffleState.OPEN);
+    }
+
+    function testforenteredvalue() public {
+        vm.prank(PLAYER);
+
+        vm.expectRevert(Raffel.Raffle__SendMoreToEnterRaffle.selector);
+        raffel.RaffelFun();
+    }
+
+    function testRaffleRecordsPlayerWhenTheyEnter() public {
+        vm.prank(PLAYER);
+
+        raffel.RaffelFun{value: entranceFee}();
+        address firstEnteres = raffel.getPlayerWithIndex(0);
+        vm.assertEq(firstEnteres, PLAYER);
+    }
+
+    function testEmitsEventOnEntrance() public {
+        vm.prank(PLAYER);
+
+        vm.expectEmit(true, false, false, false);
+        emit EnteredRaffel(PLAYER);
+        raffel.RaffelFun{value: entranceFee}();
+    }
+
+    function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
+        vm.prank(PLAYER);
+        raffel.RaffelFun{value: entranceFee}();
+
+       vm.warp(block.timestamp + interval+ 1);
+        vm.roll(block.number + 1);
+        raffel.performUpkeep("");
+
+        vm.prank(PLAYER);
+        vm.expectRevert(Raffel.Raffle__RaffleNotOpen.selector);
+        raffel.RaffelFun{value: entranceFee}();
     }
 }
