@@ -57,6 +57,7 @@ contract Raffel is VRFConsumerBaseV2 {
     address payable[] private s_players;
     uint256 private s_lastTimeStamp;
     RaffleState private s_raffleState;
+    address  s_recentWinner;
 
     // Events
 
@@ -125,7 +126,7 @@ contract Raffel is VRFConsumerBaseV2 {
             NUM_WORDS
         );
 
-     emit RequestedRaffleWinner(requestId );
+     emit RequestedRaffleWinner(requestId);
     }
 
     function fulfillRandomWords(
@@ -137,7 +138,7 @@ contract Raffel is VRFConsumerBaseV2 {
         uint Randomindex = RandomNumber % s_players.length;
         address payable winner = s_players[Randomindex];
         s_raffleState = RaffleState.OPEN;
-
+   s_recentWinner =  winner;
         s_players = new address payable[](0);
         s_lastTimeStamp = block.timestamp;
 
@@ -164,5 +165,21 @@ contract Raffel is VRFConsumerBaseV2 {
 
     function getPlayerWithIndex(uint256 index) public view returns (address){
         return s_players[index];
+    }
+
+      function getLastTimeStamp() public view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return s_players.length;
     }
 }
