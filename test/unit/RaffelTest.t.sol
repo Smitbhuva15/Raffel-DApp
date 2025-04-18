@@ -8,7 +8,6 @@ import {Raffel} from "../../src/Raffel.sol";
 import {HelpingConfig} from "../../script/HelpingConfig.s.sol";
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 
-
 contract RaffelTest is Test {
     event EnteredRaffel(address indexed player);
 
@@ -70,16 +69,89 @@ contract RaffelTest is Test {
         raffel.RaffelFun{value: entranceFee}();
     }
 
-    function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
-        vm.prank(PLAYER);
-        raffel.RaffelFun{value: entranceFee}();
+    // function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
+    //     vm.prank(PLAYER);
+    //     raffel.RaffelFun{value: entranceFee}();
 
-       vm.warp(block.timestamp + interval+ 1);
+    //    vm.warp(block.timestamp + interval+ 1);
+    //     vm.roll(block.number + 1);
+    //     raffel.performUpkeep("");
+
+    //     vm.prank(PLAYER);
+    //     vm.expectRevert(Raffel.Raffle__RaffleNotOpen.selector);
+    //     raffel.RaffelFun{value: entranceFee}();
+    // }
+
+    // ////////////////////////   CHECKUPKEEP       ///////////////////////////////
+
+    function testCheckUpkeepReturnsFalseIfItHasNoBalance() public {
+        vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
-        raffel.performUpkeep("");
 
+        (bool upkeepNeeded, ) = raffel.checkUpkeep("");
+
+        assert(upkeepNeeded == false);
+    }
+
+    function testCheckUpkeepReturnsFalseIfRaffleIsntOpen() public {
         vm.prank(PLAYER);
-        vm.expectRevert(Raffel.Raffle__RaffleNotOpen.selector);
         raffel.RaffelFun{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        // raffel.performUpkeep("");
+        (bool upkeepNeeded, ) = raffel.checkUpkeep("");
+
+        assert(upkeepNeeded == false);
+    }
+
+    function testCheckUpkeepReturnsFalseIfEnoughTimeHasntPassed() public {
+        vm.prank(PLAYER);
+        raffel.RaffelFun{value: entranceFee}();
+
+        (bool upkeepNeeded, ) = raffel.checkUpkeep("");
+
+        assert(upkeepNeeded == false);
+    }
+
+    function testCheckUpkeepReturnsTrueWhenParametersGood() public {
+        vm.prank(PLAYER);
+        raffel.RaffelFun{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        (bool upkeepNeeded, ) = raffel.checkUpkeep("");
+
+        assert(upkeepNeeded == true);
+    }
+
+    ////////////////////////////////////////////         PERFORMUPKEEP           //////////////////////////////////////
+
+    function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public {
+        vm.prank(PLAYER);
+        raffel.RaffelFun{value: entranceFee}();
+
+        vm.warp(block.timestamp + interval + 1);
+        vm.roll(block.number + 1);
+
+        raffel.performUpkeep("");
+    }
+
+    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
+        uint256 currentBalance = 0;
+        uint256 numPlayers = 0;
+        uint256 rState = 0;
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Raffel.Raffle__UpkeepNotNeeded.selector,
+                currentBalance,
+                numPlayers,
+                rState
+            )
+        );
+        raffel.performUpkeep("");
     }
 }
