@@ -3,9 +3,12 @@
 pragma solidity ^0.8.19;
 import {Script, console} from "forge-std/Script.sol";
 import {HelpingConfig} from "./HelpingConfig.s.sol";
+
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
+
 import {LinkToken} from "../test/mocks/LinkToken.sol";
-import {DevOpsTools} from "lib/foundry-devops/src/DevOpsTools.sol";
+import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
+
 
 contract CreateSubScription is Script {
     function CreateSubScriptionId(
@@ -44,24 +47,20 @@ contract FundSubscription is Script {
         console.log("Funding subscription: ", subscriptionId);
         console.log("Using vrfCoordinator: ", vrfCoordinator);
         console.log("On ChainID: ", block.chainid);
-        if (block.chainid == 11155111) {
+        if (block.chainid == 31337) {
             vm.startBroadcast();
             VRFCoordinatorV2Mock(vrfCoordinator).fundSubscription(
                 subscriptionId,
                 FUND_AMOUNT
             );
             vm.stopBroadcast();
-        } else {
-            console.log(LinkToken(link).balanceOf(msg.sender));
+        } else{
+             console.log(LinkToken(link).balanceOf(msg.sender));
             console.log(msg.sender);
             console.log(LinkToken(link).balanceOf(address(this)));
             console.log(address(this));
             vm.startBroadcast();
-            LinkToken(link).transferAndCall(
-                vrfCoordinator,
-                FUND_AMOUNT,
-                abi.encode(subscriptionId)
-            );
+            LinkToken(link).transferAndCall(vrfCoordinator, FUND_AMOUNT, abi.encode(subscriptionId));
             vm.stopBroadcast();
         }
     }
@@ -96,6 +95,7 @@ contract AddConsumer is Script {
         console.log("Adding consumer contract: ", contractToAddToVrf);
         console.log("Using vrfCoordinator: ", vrfCoordinator);
         console.log("On ChainID: ", block.chainid);
+
         vm.startBroadcast();
         VRFCoordinatorV2Mock(vrfCoordinator).addConsumer(
             subscriptionId,

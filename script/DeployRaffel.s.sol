@@ -7,6 +7,7 @@ import {Raffel} from "../src/Raffel.sol";
 import {HelpingConfig} from "./HelpingConfig.s.sol";
 import {CreateSubScription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
+
 contract DeployRaffel is Script {
     function run() external returns (Raffel, HelpingConfig) {
         HelpingConfig helperConfig = new HelpingConfig();
@@ -41,8 +42,8 @@ contract DeployRaffel is Script {
             callbackGasLimit
         );
         vm.stopBroadcast();
-        AddConsumer addcons=new AddConsumer();
-        addcons.run();
+        // AddConsumer addcons=new AddConsumer();
+        // addcons.addConsumer(address(r1),vrfCoordinator,subscriptionId);
 
         return (r1, helperConfig);
     }

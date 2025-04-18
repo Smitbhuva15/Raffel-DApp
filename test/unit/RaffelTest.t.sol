@@ -6,6 +6,8 @@ import {Test} from "forge-std/Test.sol";
 import {DeployRaffel} from "../../script/DeployRaffel.s.sol";
 import {Raffel} from "../../src/Raffel.sol";
 import {HelpingConfig} from "../../script/HelpingConfig.s.sol";
+import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
+
 
 contract RaffelTest is Test {
     event EnteredRaffel(address indexed player);
