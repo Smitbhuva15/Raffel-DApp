@@ -16,7 +16,8 @@ contract DeployRaffel is Script {
             address vrfCoordinator,
             bytes32 gasLane,
             uint64 subscriptionId,
-            uint32 callbackGasLimit
+            uint32 callbackGasLimit,
+              
         ) = helperConfig.localNetworkConfig();
 
        if(subscriptionId==0){

@@ -21,7 +21,7 @@ contract CreateSubScription is Script {
 
     function handelSubscriptionId() public returns (uint64) {
         HelpingConfig helperConfig = new HelpingConfig();
-        (, , address vrfCoordinator, , , ) = helperConfig.localNetworkConfig();
+        (, , address vrfCoordinator, , , ,) = helperConfig.localNetworkConfig();
 
         return CreateSubScriptionId(vrfCoordinator);
     }
