@@ -1,66 +1,67 @@
-## Foundry
+# Foundry Raffle-DApp
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+# Usage
 
-Foundry consists of:
+## Start a local node
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```
+make anvil
 ```
 
-### Test
+## Deploy
 
-```shell
-$ forge test
+This will default to your local node. You need to have it running in another terminal in order for it to deploy.
+
+```
+make deploy
+```
+## Testing
+
+```
+forge test
 ```
 
-### Format
+or
 
-```shell
-$ forge fmt
+```
+forge test --fork-url $SEPOLIA_RPC_URL
 ```
 
-### Gas Snapshots
+### Test Coverage
 
-```shell
-$ forge snapshot
+```
+forge coverage
 ```
 
-### Anvil
+# Deployment to a testnet or mainnet
 
-```shell
-$ anvil
+1. Setup environment variables
+2. Get testnet ETH 
+3. Deploy
+4. Chainlink Automation Upkeep
+
+## Scripts
+
+deployed locally:
+
+```
+cast send <RAFFLE_CONTRACT_ADDRESS> "enterRaffle()" --value 0.1ether --private-key <PRIVATE_KEY> --rpc-url $RPC_URL
 ```
 
-### Deploy
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+## Estimate gas
+
+You can estimate how much gas things cost by running:
+
+```
+forge snapshot
 ```
 
-### Cast
 
-```shell
-$ cast <subcommand>
+# Formatting
+
+To run code formatting:
+
 ```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+forge fmt
 ```
