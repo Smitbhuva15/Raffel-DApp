@@ -42,8 +42,8 @@ contract DeployRaffel is Script {
             callbackGasLimit
         );
         vm.stopBroadcast();
-        // AddConsumer addcons=new AddConsumer();
-        // addcons.addConsumer(address(r1),vrfCoordinator,subscriptionId);
+      AddConsumer addconsumer=new AddConsumer();
+      addconsumer.addConsumer(address(r1),vrfCoordinator,subscriptionId);
 
         return (r1, helperConfig);
     }

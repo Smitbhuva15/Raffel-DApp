@@ -101,7 +101,7 @@ contract RaffelTest is Test {
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
 
-        // raffel.performUpkeep("");
+        raffel.performUpkeep("");
         (bool upkeepNeeded, ) = raffel.checkUpkeep("");
 
         assert(upkeepNeeded == false);
@@ -164,7 +164,7 @@ contract RaffelTest is Test {
         _;
     }
 
-    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
+    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public raffleEntered {
         vm.recordLogs();
         raffel.performUpkeep("");
         Vm.Log[] memory entries = vm.getRecordedLogs();
@@ -175,6 +175,11 @@ contract RaffelTest is Test {
         assert(uint256(requestId) > 0);
         assert(uint256(raffleState) == 1);
     }
+
+
+
+    //////////////////////////////////            FulfillRandomWords       /////////////////////////////////////
+
 
     function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(
         uint256 randomNumberId
@@ -204,7 +209,7 @@ contract RaffelTest is Test {
         }
 
         uint256 startingTimeStamp = raffel.getLastTimeStamp();
-        uint startingBalance = 10 ether;
+        uint startingBalance = address(1).balance;
 
         vm.recordLogs();
         raffel.performUpkeep("");
@@ -218,12 +223,17 @@ contract RaffelTest is Test {
 
         uint256 endingTimeStamp = raffel.getLastTimeStamp();
         uint256 prize = entranceFee * (additionalEntrances + 1);
+        console.log(entranceFee);
+        console.log(prize);
 
         assert(uint256(raffel.getRaffelState()) == 0);
         assert(raffel.getNumberOfPlayers() == 0);
+      
         assert(
             raffel.getRecentWinner().balance ==
-                (prize + startingBalance - entranceFee)
+                (prize + startingBalance )
+
+                
         );
         assert(endingTimeStamp > startingTimeStamp);
     }

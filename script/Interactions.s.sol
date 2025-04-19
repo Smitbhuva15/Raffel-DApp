@@ -113,7 +113,7 @@ contract AddConsumer is Script {
 
     function run() external {
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment(
-            "Raffle",
+            "Raffel",
             block.chainid
         );
         addConsumerUsingConfig(mostRecentlyDeployed);
