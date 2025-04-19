@@ -38,7 +38,7 @@ deploy-local:
 	@forge script script/DeployRaffel.s.sol:DeployRaffel --broadcast --rpc-url http://127.0.0.1:8545 --private-key $(DEFAULT_ANVIL_KEY)
 
 deploy-sepolia:
-	@forge script script/DeployRaffel.s.sol:DeployRaffel  --private-key $(PRIVATE_KEY) --rpc-url $(SEPOLIA_URL) --broadcast
+	@forge script script/DeployRaffel.s.sol:DeployRaffel  --private-key $(PRIVATE_KEY) --rpc-url $(SEPOLIA_URL) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 
 
 createSubscription:
