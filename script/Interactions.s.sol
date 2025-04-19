@@ -18,7 +18,7 @@ contract CreateSubScription is Script {
         vm.startBroadcast(deployerKey);
         uint64 SubScriptionId = VRFCoordinatorV2Mock(vrfCoordinator)
             .createSubscription();
-        console.log(SubScriptionId, "///////");
+      
         vm.stopBroadcast();
 
         return SubScriptionId;

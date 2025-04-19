@@ -220,8 +220,7 @@ contract RaffelTest is Test {
 
         uint256 endingTimeStamp = raffel.getLastTimeStamp();
         uint256 prize = entranceFee * (additionalEntrances + 1);
-        console.log(entranceFee);
-        console.log(prize);
+    
 
         assert(uint256(raffel.getRaffelState()) == 0);
         assert(raffel.getNumberOfPlayers() == 0);
