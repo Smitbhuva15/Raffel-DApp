@@ -114,7 +114,7 @@ contract AddConsumer is Script {
         } else {
             console.log(vm.addr(deployerKey),"deployerKey");
             console.log( vm.addr(vm.envUint("PRIVATE_KEY")));
-            vm.startBroadcast(0xA725D004FA87A5202Df119fE5AaCEc95043Db7b9);
+            vm.startBroadcast(deployerKey);
             VRFCoordinatorV2Interface(vrfCoordinator).addConsumer(
                 subscriptionId,
                 contractToAddToVrf
