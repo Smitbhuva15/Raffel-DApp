@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.19;
 
-import {Script} from "forge-std/Script.sol";
+import {Script,console} from "forge-std/Script.sol";
 import {Raffel} from "../src/Raffel.sol";
 import {HelpingConfig} from "./HelpingConfig.s.sol";
 import {CreateSubScription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
@@ -18,18 +18,22 @@ contract DeployRaffel is Script {
             bytes32 gasLane,
             uint64 subscriptionId,
             uint32 callbackGasLimit,
-            address link
+            address link,
+            uint256 deployerKey
         ) = helperConfig.localNetworkConfig();
+
+        
 
         if (subscriptionId == 0) {
             CreateSubScription createsubscription = new CreateSubScription();
             subscriptionId = createsubscription.CreateSubScriptionId(
-                vrfCoordinator
+                vrfCoordinator,
+                deployerKey
             );
 
             //  fund it
             FundSubscription fundSub = new FundSubscription();
-            fundSub.fundSubscription(vrfCoordinator, subscriptionId, link);
+            fundSub.fundSubscription(vrfCoordinator, subscriptionId, link,deployerKey);
         }
 
         vm.startBroadcast();
@@ -43,7 +47,7 @@ contract DeployRaffel is Script {
         );
         vm.stopBroadcast();
       AddConsumer addconsumer=new AddConsumer();
-      addconsumer.addConsumer(address(r1),vrfCoordinator,subscriptionId);
+      addconsumer.addConsumer(address(r1),vrfCoordinator,subscriptionId,deployerKey);
 
         return (r1, helperConfig);
     }
